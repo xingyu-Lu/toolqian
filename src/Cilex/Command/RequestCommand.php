@@ -59,13 +59,13 @@ class RequestCommand extends Command
         $array = $this->getArray();
 
         if ($method == 'get') {
-            $this->getForeach($array, $api);
+            $this->goForeach($array, $api, $method);
         } elseif ($method == 'post') {
-            $this->postForeach($array, $api);
+            $this->goForeach($array, $api, $method);
         }
     }
 
-    private function postForeach($array, $api)
+    private function goForeach($array, $api, $method)
     {
         foreach ($array as $item) {
             $arr = explode(',', $item);
@@ -76,26 +76,15 @@ class RequestCommand extends Command
                 'os' => $arr[3],
                 'device' => $arr[5]
             ];
-            $res = $this->httpPost($api, $param);
-            var_dump($res);
-        }
-    }
-
-    private function getForeach($array, $api)
-    {
-        foreach ($array as $item) {
-            $arr = explode(',', $item);
-            $param = [
-                'keyword' => $arr[0],
-                'idfa' => $arr[1],
-                'ip' => $arr[2],
-                'os' => $arr[3],
-                'device' => $arr[5]
-            ];
-            $param_str = http_build_query($param);
-            $api .= '?' . $param_str;
-            $res = $this->httpGet($api);
-            var_dump($res);
+            if ($method == 'post') {
+                $res = $this->httpPost($api, $param);
+                var_dump($res);
+            } elseif ($method == 'get') {
+                $param_str = http_build_query($param);
+                $api .= '?' . $param_str;
+                $res = $this->httpGet($api);
+                var_dump($res);
+            }
         }
     }
 
