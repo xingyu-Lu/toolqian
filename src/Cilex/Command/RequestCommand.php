@@ -19,7 +19,7 @@ class RequestCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('request')
+            ->setName('request:active')
             ->setDescription('Request interface')
             ->addArgument('api', InputArgument::REQUIRED, 'Please input api?')
             ->addArgument('method', InputArgument::REQUIRED, 'Please input method?');
@@ -94,7 +94,6 @@ class RequestCommand extends Command
             ];
             $param_str = http_build_query($param);
             $api .= '?' . $param_str;
-            var_dump($api);exit;
             $res = $this->httpGet($api);
             var_dump($res);
         }
