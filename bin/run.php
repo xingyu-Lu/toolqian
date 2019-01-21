@@ -11,6 +11,7 @@ $app->command(new \Cilex\Command\GreetCommand());
 $app->command(new \Cilex\Command\DemoInfoCommand());
 
 $app->command(new \Cilex\Command\RequestCommand());
+$app->command(new \Cilex\Command\SearchLogCommand());
 
 $app->command('foo', function ($input, $output) {
     $output->writeln('Example output');
