@@ -48,6 +48,7 @@ class SearchLogCommand extends Command
                             $str = substr(trim($array[3]), 4);
 //                        echo $str;exit;
                             $data = unserialize($str);
+//                            var_dump($data);
                             if ($data['error'] == 'Operation timed out after 5000 milliseconds with 0 bytes received') {
                                 $search_ios12_count_timeout++;
                             }
