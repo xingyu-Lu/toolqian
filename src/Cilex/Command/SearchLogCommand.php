@@ -149,7 +149,7 @@ class SearchLogCommand extends Command
             $this->PrintOut($type, $rank_created_count, $rank_created_count_success, $rank_created_count_fail, $rank_created_count_timeout,  $output);
         } elseif ($type == 'amazon') {
             $this->PrintOut($type, $search_amazon_count, $search_amazon_count_success, $search_amazon_count_fail, $search_amazon_count_timeout, $output);
-            $this->PrintOut($type . '12', $search_amazon_12_count, $search_amazon_12_count_success, $search_amazon_12_count_fail, $search_amazon_12_count_timeout, $output);
+            $this->PrintOut($type . '_ios12', $search_amazon_12_count, $search_amazon_12_count_success, $search_amazon_12_count_fail, $search_amazon_12_count_timeout, $output);
         } elseif ($type == 'china') {
             $this->PrintOut($type, $search_china_count, $search_china_count_success, $search_china_count_fail, $search_china_count_timeout, $output);
         }
@@ -160,6 +160,6 @@ class SearchLogCommand extends Command
         $success_rate = $success_counts/$counts;
         $fail_rate = $fail_counts/$counts;
         $timeout_rate = $time_out_counts/$counts;
-        $output->writeln("$type 总次数：$counts" . "$type ，成功次数：$success_counts" . "$type ，失败次数：$fail_counts" . "$type ，超时次数：$time_out_counts" . "$type ，成功率：$success_rate" . "$type ，失败率：$fail_rate" . "$type ，超时率：$timeout_rate");
+        $output->writeln("$type 总次数：$counts" . "，成功次数：$success_counts" . "，失败次数：$fail_counts" . "，超时次数：$time_out_counts" . "，成功率：$success_rate" . "，失败率：$fail_rate" . "，超时率：$timeout_rate");
     }
 }
