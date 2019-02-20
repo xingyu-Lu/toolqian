@@ -85,9 +85,12 @@ class SearchLogCommand extends Command
                             if (substr($array[2], -5) == 'ios12') {
                                 $search_amazon_12_count++;
                                 $str = substr(trim($array[3]), 4);
-                                $data = unserialize($str);
+                                $data = @unserialize($str);
+                                //输出不能正常反序列化的数据
                                 if (!$data) {
+                                    $output->writeln($array[2]);
                                     $output->writeln($str);
+                                    echo PHP_EOL;
                                 }
                                 $res_data = json_decode($data['data'], true);
                                 if ($data['error'] == 'Operation timed out after 5000 milliseconds with 0 bytes received') {
@@ -101,9 +104,12 @@ class SearchLogCommand extends Command
                             } else {
                                 $search_amazon_count++;
                                 $str = substr(trim($array[3]), 4);
-                                $data = unserialize($str);
+                                $data = @unserialize($str);
+                                //输出不能正常反序列化的数据
                                 if (!$data) {
+                                    $output->writeln($array[2]);
                                     $output->writeln($str);
+                                    echo PHP_EOL;
                                 }
                                 $res_data = json_decode($data['data'], true);
                                 if ($data['error'] == 'Operation timed out after 5000 milliseconds with 0 bytes received') {
@@ -138,29 +144,22 @@ class SearchLogCommand extends Command
             fclose($handle);
         }
         if ($type == 'ios12') {
-            $success_rate = $search_ios12_count_success/$search_ios12_count;
-            $fail_rate = $search_ios12_count_fail/$search_ios12_count;
-            $timeout_rate = $search_ios12_count_timeout/$search_ios12_count;
-            $output->writeln("总次数：$search_ios12_count" . "，成功次数：$search_ios12_count_success" . "，失败次数：$search_ios12_count_fail" . "，超时次数：$search_ios12_count_timeout" . "，成功率：$success_rate" . "，失败率：$fail_rate" . "，超时率：$timeout_rate");
+            $this->PrintOut($type, $search_ios12_count, $search_ios12_count_success, $search_ios12_count_fail, $search_ios12_count_timeout,  $output);
         } elseif ($type == 'create') {
-            $success_rate = $rank_created_count_success/$rank_created_count;
-            $fail_rate = $rank_created_count_fail/$rank_created_count;
-            $timeout_rate = $rank_created_count_timeout/$rank_created_count;
-            $output->writeln("总次数：$rank_created_count" . "，成功次数：$rank_created_count_success" . "，失败次数：$rank_created_count_fail" . "，超时次数：$rank_created_count_timeout" . "，成功率：$success_rate" . "，失败率：$fail_rate" . "，超时率：$timeout_rate");
+            $this->PrintOut($type, $rank_created_count, $rank_created_count_success, $rank_created_count_fail, $rank_created_count_timeout,  $output);
         } elseif ($type == 'amazon') {
-            $success_rate = $search_amazon_count_success/$search_amazon_count;
-            $success_rate_12 = $search_amazon_12_count_success/$search_amazon_12_count;
-            $fail_rate = $search_amazon_count_fail/$search_amazon_count;
-            $fail_rate_12 = $search_amazon_12_count_fail/$search_amazon_12_count;
-            $timeout_rate = $search_amazon_count_timeout/$search_amazon_count;
-            $timeout_rate_12 = $search_amazon_12_count_timeout/$search_amazon_12_count;
-            $output->writeln("总次数：$search_amazon_count" . "，成功次数：$search_amazon_count_success" . "，失败次数：$search_amazon_count_fail" . "，超时次数：$search_amazon_count_timeout" . "，成功率：$success_rate" . "，失败率：$fail_rate" . "，超时率：$timeout_rate");
-            $output->writeln("ios12总次数：$search_amazon_12_count" . "，ios12成功次数：$search_amazon_12_count_success" . "，ios12失败次数：$search_amazon_12_count_fail" . "，ios12超时次数：$search_amazon_12_count_timeout" . "，ios12成功率：$success_rate_12" . "，ios12失败率：$fail_rate_12" . "，ios12超时率：$timeout_rate_12");
+            $this->PrintOut($type, $search_amazon_count, $search_amazon_count_success, $search_amazon_count_fail, $search_amazon_count_timeout, $output);
+            $this->PrintOut($type . '12', $search_amazon_12_count, $search_amazon_12_count_success, $search_amazon_12_count_fail, $search_amazon_12_count_timeout, $output);
         } elseif ($type == 'china') {
-            $success_rate = $search_china_count_success/$search_china_count;
-            $fail_rate = $search_china_count_fail/$search_china_count;
-            $timeout_rate = $search_china_count_timeout/$search_china_count;
-            $output->writeln("总次数：$search_china_count" . "，成功次数：$search_china_count_success" . "，失败次数：$search_china_count_fail" . "，超时次数：$search_china_count_timeout" . "，成功率：$success_rate" . "，失败率：$fail_rate" . "，超时率：$timeout_rate");
+            $this->PrintOut($type, $search_china_count, $search_china_count_success, $search_china_count_fail, $search_china_count_timeout, $output);
         }
+    }
+
+    protected function PrintOut($type, $counts, $success_counts, $fail_counts, $time_out_counts, $output)
+    {
+        $success_rate = $success_counts/$counts;
+        $fail_rate = $fail_counts/$counts;
+        $timeout_rate = $time_out_counts/$counts;
+        $output->writeln("$type 总次数：$counts" . "$type ，成功次数：$success_counts" . "$type ，失败次数：$fail_counts" . "$type ，超时次数：$time_out_counts" . "$type ，成功率：$success_rate" . "$type ，失败率：$fail_rate" . "$type ，超时率：$timeout_rate");
     }
 }
