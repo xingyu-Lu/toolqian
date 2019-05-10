@@ -30,6 +30,7 @@ class NotSameRegionCommand extends Command
                     $data = explode(':', $array[2]);
                     if (!in_array($data[1], $result_array)) {
                         $result_array[] = $data[1];
+                        $output->writeln($data[1]);
                     }
                 } catch (\Exception $e) {
                     echo 'message:' . $e->getMessage();
