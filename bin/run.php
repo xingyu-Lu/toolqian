@@ -16,6 +16,7 @@ $app->command(new \Cilex\Command\MobileVerifyCommand());
 $app->command(new \Cilex\Command\MobileNumberSegment());
 $app->command(new \Cilex\Command\DecodeCommand());
 $app->command(new \Cilex\Command\NotSameRegionCommand());
+$app->command(new \Cilex\Command\YflingCommand());
 
 $app->command('foo', function ($input, $output) {
     $output->writeln('Example output');
