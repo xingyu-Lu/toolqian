@@ -30,6 +30,37 @@ class RequestCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /*$file_0 =  __DIR__ . '/../File/request_20190603_0.csv';
+        $file_1 =  __DIR__ . '/../File/request_20190603_1.csv';
+        $file_2 =  __DIR__ . '/../File/request_20190603_2.csv';
+        $handle_1 = fopen($file_2, "r");
+        $handle_2 = fopen($file_0, "w");
+        $data_1 = [];
+        while (($datas = fgetcsv($handle_1, 1000, "	")) !== FALSE) {
+            $data_1[$datas[0]] = $datas[1];
+        }
+
+        if (($handle = fopen($file_1, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, "	")) !== FALSE) {
+                if ($data_1[$data[1]]) {
+                    $all_data[] = [
+                        'tiantianqianzhuang',
+                        '1389706021',
+                        $data[1],
+                        $data[0],
+                        $data[2],
+                        $data[3],
+                        $data[4],
+                        $data_1[$data[1]]
+                    ];
+                }
+            }
+        }
+        foreach ($all_data as $datum) {
+            fputcsv($handle_2, $datum);
+        }
+        exit;*/
+
         $this->preCheck($input, $output);
         $this->doOperate($input, $output);
         $output->writeln('all is over');
@@ -58,39 +89,64 @@ class RequestCommand extends Command
         $method = $input->getArgument('method');
         $array = $this->getArray();
 
+        $output->writeln('start');
+
         if ($method == 'get') {
             $this->goForeach($array, $api, $method);
         } elseif ($method == 'post') {
             $this->goForeach($array, $api, $method);
         }
+
+        $output->writeln('end');
     }
 
     private function goForeach($array, $api, $method)
     {
+        $j = 0;
+        $i = 0;
         foreach ($array as $item) {
-            $arr = explode(',', $item);
             $param = [
-                'keyword' => $arr[0],
-                'idfa' => $arr[1],
-                'ip' => $arr[2],
-                'os' => $arr[3],
-                'device' => $arr[5]
+                'idfa' => $item[0],
+                'source_code' => 'testin',
+                'apple_id' => 1450249587,
+                'keyword' => '太古',
             ];
             if ($method == 'post') {
                 $res = $this->httpPost($api, $param);
-                var_dump($res);
+                $res_data = json_decode($res['data'], true);
+                if ($res['errno'] == 0 && $res_data['success'] == 'yes' && $res_data['info'] == 'ok') {
+                    echo ++$j . '/' . $item[0] . "\n";
+                } else {
+                    echo $item[0] . 'fail reactive' . "\n";
+                }
             } elseif ($method == 'get') {
                 $param_str = http_build_query($param);
-                $api .= '?' . $param_str;
-                $res = $this->httpGet($api);
-                var_dump($res);
+                $r_api = $api . '?' . $param_str;
+                $res = $this->httpGet($r_api);
+                $res_data = json_decode($res['data'], true);
+                if ($res['errno'] == 0 && $res_data['status'] == 1 && $res_data['code'] == 110) {
+                    $i++;
+                    echo 'i:' . $i . "\n";
+                } else {
+                    $j++;
+                    var_dump($r_api, $res);
+                    echo 'j:' . $j . "\n";
+                }
             }
         }
+        echo '当前激活' . $i . '已激活' . $j . "\n";
     }
 
     private function getArray()
     {
-        $array = [
+        $file_path =  __DIR__ . '/../File/request_20190812.csv';
+        $handle = fopen($file_path, "r");
+        $array = [];
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            $array[] = $data;
+        }
+
+        /*$array = [
             '芝麻借款,36326091-A27A-4AFD-9837-438D93283456,36.100.37.90,12.1,2018年11月29日,iPhone5s',
             '芝麻借款,8080F28F-5950-45B7-9517-4F0453630BC1,58.21.52.146,12.1,2018年11月29日,iPhone6s Plus',
             '芝麻借款,D52C01FF-7741-4974-83DF-0D31ADC3B84B,222.184.184.149,12.1,2018年11月29日,iPhone8',
@@ -106,7 +162,7 @@ class RequestCommand extends Command
             '分期乐app,9826985A-DA90-4514-8757-5762D73B5D2E,111.8.123.244,11.4.1,2018年11月29日,iPhone5s',
             '分期乐app,F5FA2EAB-12FE-44CF-908E-3367256E75CC,116.149.196.222,10.0.2,2018年11月29日,iPhone6 Plus',
             '分期乐app,27B0CA64-9A37-4F9F-83D8-7351AEF67B62,182.106.100.226,12.0.1,2018年11月29日,iPhone SE',
-        ];
+        ];*/
         return $array;
     }
 
