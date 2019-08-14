@@ -105,11 +105,17 @@ class RequestCommand extends Command
         $j = 0;
         $i = 0;
         foreach ($array as $item) {
+            $e_item = str_replace('	', ',', $item[0]);
+            $e_item = explode(",", $e_item);
+
             $param = [
-                'idfa' => $item[0],
-                'source_code' => 'testin',
-                'apple_id' => 1450249587,
-                'keyword' => '太古',
+                'adid' => '1414734cbc9abff',
+                'idfa' => $e_item[1],
+                'channel' => 'yunce',
+                'keyword' => $e_item[0],
+                'type' => 1,
+                'ip' => $e_item[2],
+                'os' => $e_item[3],
             ];
             if ($method == 'post') {
                 $res = $this->httpPost($api, $param);
@@ -124,9 +130,9 @@ class RequestCommand extends Command
                 $r_api = $api . '?' . $param_str;
                 $res = $this->httpGet($r_api);
                 $res_data = json_decode($res['data'], true);
-                if ($res['errno'] == 0 && $res_data['status'] == 1 && $res_data['code'] == 110) {
+                if ($res['errno'] == 0 && $res_data['code'] == 0) {
                     $i++;
-                    echo 'i:' . $i . "\n";
+                    echo 'i:' . $i . '-' . $res_data['code'] . '-' . $res_data['data'] . "\n";
                 } else {
                     $j++;
                     var_dump($r_api, $res);
@@ -134,15 +140,15 @@ class RequestCommand extends Command
                 }
             }
         }
-        echo '当前激活' . $i . '已激活' . $j . "\n";
+//        echo '当前激活' . $i . '已激活' . $j . "\n";
     }
 
     private function getArray()
     {
-        $file_path =  __DIR__ . '/../File/request_20190812.csv';
+        $file_path =  __DIR__ . '/../File/request_20190814.csv';
         $handle = fopen($file_path, "r");
         $array = [];
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, " ")) !== FALSE) {
             $array[] = $data;
         }
 
